@@ -171,8 +171,10 @@ function w = skeval(z, alpha)
     
     if ~isinf(alpha)
         w = z - alpha;
+        pole = isinf(z);
     else
         w = 1./z;
+        pole = z == 0;
     end
     function fprod(th)
         thjz = (th(1)*z + th(3))./(th(2)*z + th(4));
@@ -185,6 +187,7 @@ function w = skeval(z, alpha)
         end
     end
     cellfun(@fprod, grp)
+    w(pole) = inf;
 end
 
 wf = @skeval;
