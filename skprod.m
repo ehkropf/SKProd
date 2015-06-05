@@ -170,22 +170,21 @@ function w = skeval(z, alpha)
     end
     
     if ~isinf(alpha)
-        w = log(z - alpha);
+        w = z - alpha;
     else
-        w = log(1./z);
+        w = 1./z;
     end
-    function logsum(th)
+    function fprod(th)
         thjz = (th(1)*z + th(3))./(th(2)*z + th(4));
         if ~isinf(alpha)
-            thja = exp(log(th(1)*alpha + th(3)) - log(th(2)*alpha + th(4)));
-            w = w + log(thjz - alpha) + log(thja - z) ...
-                - log(thjz - z) - log(thja - alpha);
+            thja = (th(1)*alpha + th(3))./(th(2)*alpha + th(4));
+            w = w.*(thjz - alpha).*(thja - z)...
+                ./(thjz - z)/(thja - alpha);
         else
-            w = w + log(th(1)/th(2) - z) - log(thjz - z);
+            w = w.*(th(1)/th(2) - z)./(thjz - z);
         end
     end
-    cellfun(@logsum, grp)
-    w = exp(w);
+    cellfun(@fprod, grp)
 end
 
 wf = @skeval;
