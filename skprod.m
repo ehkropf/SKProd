@@ -173,8 +173,10 @@ function w = skeval(z, alpha)
         w = z - alpha;
         pole = isinf(z);
     else
-        w = 1./z;
-        pole = z == 0;
+        % No zero.
+        w = complex(ones(size(z)));
+        % No pole.
+        pole = false(size(z));
     end
     function fprod(th)
         thjz = (th(1)*z + th(3))./(th(2)*z + th(4));
