@@ -167,14 +167,20 @@ function w = skeval(z, alpha)
         error('The parameter alpha must be a scalar.')
     end
     
+    if isa(z, 'double')
+        islarge = abs(z) > 2^1000;
+    elseif isa(z, 'single')
+        islarge = abs(z) > 2^120;
+    else
+        error('Argument z must be single or double precision.')
+    end
+    atinf = isinf(z);
+    
     if ~isinf(alpha)
         w = z - alpha;
-        pole = isinf(z);
     else
-        % No zero.
+        % No zeros.
         w = complex(ones(size(z)));
-        % No pole.
-        pole = false(size(z));
     end
     
     function fprod(th)
@@ -189,7 +195,15 @@ function w = skeval(z, alpha)
     end
     
     cellfun(@fprod, grp)
-    w(pole) = inf;
+    if ~isinf(alpha)
+        w(atinf) = inf;
+        % Normalize failed large number input.
+        w(islarge & isnan(w)) = inf;
+    else
+        % No pole.
+        w(atinf) = 1;
+        w(islarge & isnan(w)) = 1;
+    end
 end
 
 wf = @skeval;
