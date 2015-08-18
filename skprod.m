@@ -58,15 +58,14 @@ function wf = skprod(dv, qv, L)
 % You should have received a copy of the GNU General Public License
 % along with skprod.  If not, see <http://www.gnu.org/licenses/>.
 
-if nargin < 2
+if nargin < 3
     lmax = 4;
 else
     lmax = L;
 end
 
-if numel(dv) ~= numel(qv) || numel(dv) < 2
-    error(['It is expected the numbers of centers and radii\n', ...
-        'be equal and greater than 2.'])
+if numel(dv) ~= numel(qv)
+    error('It is expected the numbers of centers and radii be equal.')
 end
 
 %Group generators.
@@ -74,8 +73,7 @@ m = numel(dv);
 ngen = 2*m;
 gens = cell(ngen, 1);
 for j = 1:m
-    th = [qv(j)^2 - abs(dv(j))^2, dv(j); ...
-        -conj(dv(j)), 1]/qv(j);
+    th = [qv(j)^2 - abs(dv(j))^2, dv(j); -conj(dv(j)), 1]/qv(j);
     gens{j} = th;
     gens{j+m} = [th(4), -th(3); -th(2), th(1)];
 end
@@ -178,6 +176,7 @@ function w = skeval(z, alpha)
         % No pole.
         pole = false(size(z));
     end
+    
     function fprod(th)
         thjz = (th(1)*z + th(3))./(th(2)*z + th(4));
         if ~isinf(alpha)
@@ -188,6 +187,7 @@ function w = skeval(z, alpha)
             w = w.*(th(1)/th(2) - z)./(thjz - z);
         end
     end
+    
     cellfun(@fprod, grp)
     w(pole) = inf;
 end
