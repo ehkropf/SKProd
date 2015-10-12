@@ -162,9 +162,15 @@ while true
 end
 
 % Evaluate.
-function w = skeval(z, alpha)
+function w = skeval(z, alpha, hat)
     if numel(alpha) ~= 1
         error('The parameter alpha must be a scalar.')
+    end
+    
+    if nargin > 2 && strcmp(hat, 'hat')
+        dohat = true;
+    else
+        dohat = false;
     end
     
     if isa(z, 'double')
@@ -176,10 +182,9 @@ function w = skeval(z, alpha)
     end
     atinf = isinf(z);
     
-    if ~isinf(alpha)
+    if ~isinf(alpha) && ~dohat
         w = z - alpha;
     else
-        % No zeros.
         w = complex(ones(size(z)));
     end
     
@@ -193,8 +198,8 @@ function w = skeval(z, alpha)
             w = w.*(th(1)/th(2) - z)./(thjz - z);
         end
     end
-    
     cellfun(@fprod, grp)
+    
     if ~isinf(alpha)
         w(atinf) = inf;
         % Normalize failed large number input.
