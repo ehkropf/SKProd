@@ -21,6 +21,10 @@ function wf = skprod(dv, qv, L)
 %   where z is an array of points at which to evaluate the function, and
 %   alpha is a scalar parameter value.
 %
+% The "hat" version of the product formula, where the zero and pole have
+% been factored out, may be accessed via
+%    w_hat = wf(z, alpha, 'hat').
+%
 % -------
 % Example:
 % 
